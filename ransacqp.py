@@ -1,4 +1,5 @@
 import math as m
+from win32api import GetSystemMetrics
 
 def closersPoint(sth, helpfull_list):
                                 #w sumie obliczamy dystans od
@@ -42,18 +43,20 @@ def leastSquares( landmarks):   #zwraca wspolczynniki a i b prostej
     return [a, b]
 
 
-def paintLandGroup(landmarks, qp, aa, X0, Y0):
+def paintLandGroup(landmarks, qp, scale, X0, Y0):
     a, b = leastSquares(landmarks)
     first_point = landmarks[0]
     last_point = landmarks[-1]
 
     if a < m.fabs(0.1):
-        qp.drawLine(X0 + aa*first_point[0], Y0 +aa*first_point[1], X0 + aa*last_point[0],Y0 + aa*last_point[1])
+        qp.drawLine(X0 + scale * first_point[0], Y0 - scale * first_point[1], X0 + scale * last_point[0], Y0 - scale * last_point[1])
+        # qp.drawLine(X0 + aa*first_point[0], Y0 +aa*first_point[1], X0 + aa*last_point[0],Y0 + aa*last_point[1])
         return [[first_point[0],first_point[1]] , [last_point[0], last_point[1]]]#return [first_point, last_point]
     else:
         y0 = a*first_point[0] + b
         y1 = a*last_point[0] + b
-        qp.drawLine(X0 + aa*first_point[0], Y0 +aa*first_point[1], X0 + aa*last_point[0],Y0 + aa*last_point[1])
+        qp.drawLine(X0 + scale * first_point[0], Y0 - scale * first_point[1], X0 + scale * last_point[0], Y0 - scale * last_point[1])
+        # qp.drawLine(X0 + aa*first_point[0], Y0 +aa*first_point[1], X0 + aa*last_point[0],Y0 + aa*last_point[1])
 
 
         return [[first_point[0], y0], [last_point[0], y1]]#[[first_point[0], y0, [last_point[0], y1]]# zwracamy P0, P1

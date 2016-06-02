@@ -225,7 +225,7 @@ class MyWidget(QtGui.QWidget):
     def paintEvent(self, e):
         qp = QtGui.QPainter()
         qp.begin(self)
-        a = 6#15
+        a = 4#15
         X0 = 300
         Y0 = 300
         lines_end = []
@@ -234,7 +234,7 @@ class MyWidget(QtGui.QWidget):
         for sth in self.sensors.points_list:
             list_to_paint = closersPoint(sth, copy.copy(self.sensors.points_list))
             lines_end.append(paintLandGroup(list_to_paint, qp, a, X0, Y0))
-        print(len(self.sensors.points_list), len(list_to_paint))
+
 
 
 
