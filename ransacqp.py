@@ -7,7 +7,7 @@ def closersPoint(sth, helpfull_list):
     sth_distance_list = []
     for othersth in helpfull_list:
         distance = m.sqrt((sth[0] - othersth[0])**2 + (sth[1] - othersth[1])**2)
-        if len(sth_list) < 5 and distance < 10:
+        if len(sth_list) < 5 and distance < 15:
             sth_list.append(othersth)
             sth_distance_list.append(distance)
         else:

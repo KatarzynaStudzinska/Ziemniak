@@ -33,8 +33,8 @@ class Dane():
 
     def send(self):#, x, y):
         time.sleep(2)
-        xx = float(0)#float(x)
-        yy = float(500)#float(y)
+        yy = float(0)#float(x)
+        xx = float(500)#float(y)
 
         ser.write(b's')
         ser.write(struct.pack('f', xx))

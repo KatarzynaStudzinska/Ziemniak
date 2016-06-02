@@ -235,6 +235,11 @@ class MyWidget(QtGui.QWidget):
             list_to_paint = closersPoint(sth, copy.copy(self.sensors.points_list))
             lines_end.append(paintLandGroup(list_to_paint, qp, a, X0, Y0))
 
+        for para in lines_end:
+            first = para[0]
+            last = para[1]
+
+            pass
 
 
 
