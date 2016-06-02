@@ -12,11 +12,8 @@ class Dane():
     def __init__(self):
         self.points_list = []
         self.position = []
-
         Thread(target=self.joinLandmark, args=()).start()
         Thread(target=self.send, args=()).start()
-
-
         self.x = 0
         self.y = 0
 
@@ -36,8 +33,8 @@ class Dane():
 
     def send(self):#, x, y):
         time.sleep(2)
-        xx = float(500)#float(x)
-        yy = float(0)#float(y)
+        xx = float(50)#float(x)
+        yy = float(200)#float(y)
 
         ser.write(b's')
         ser.write(struct.pack('f', xx))
@@ -66,6 +63,7 @@ class Dane():
         while(1):
             try:
                 x, y, p0, p00, p1, p11, p2, p22, p3, p33, p4, p44, p5, p55 = self.odczyt()
+                print(p0, p1,  p2,  p3,  p4,  p5)
                 x = float(x)/10
                 y = float(y)/10
                 p0 = self.corect_data(p0, p00)
@@ -74,7 +72,7 @@ class Dane():
                 p3 = self.corect_data(p3, p33)
                 p4 = self.corect_data(p4, p44)
                 p5 = self.corect_data(p5, p55)
-                print x, y, p0, p00, p1, p11, p2, p22, p3, p33, p4, p44, p5, p55
+
                 x0 = int(float(x) + (6.6 + p0) * cos(2.*pi/3))
                 y0 = int(float(y) + (6.6 + p0) * sin(2.*pi/3))
                 x1 = int(float(x) + (6.6 + p1) * cos(pi/3))
@@ -87,7 +85,9 @@ class Dane():
                 y4 = int(float(y) + (6.6 + p4) * sin(4.*pi/3))
                 #x5 = int(float(x) + (6.6 + p5) * cos(pi))
                 #y5 = int(float(y) + (6.6 + p5) * sin(pi))
-                self.position.append([float(x), float(y)])
+
+                if (x >=0 and x < 10000 and y >=0 and y < 10000):
+                    self.position.append([float(x), float(y)])
 
                 # self.points_list.append([x0, y0])
                 # self.points_list.append([x1, y1])
@@ -111,30 +111,4 @@ class Dane():
                 #print(self.points_list)
             except:
                 pass
-Dane()
-
-
-# s = b"s"
-# c_s = c_char_p(s) # tutaj mamy wskaznik na char?
-# bitstart = c_char(b's')#tutaj mam nadzieje, ze mamy chara..
-#
-#
-# k = 0
-# floatlist = [200, 200]
-# print(floatlist, "floatlist")
-# buf = struct.pack('%sf' % len(floatlist), *floatlist)
-#
-#
-#
-#
-# while (1):
-#     x, y, p0, p00, p1, p11, p2, p22, p3, p33, p4, p44, p5, p55 = odczyt()
-#
-#     print(x, y)
-
-    # print("kk")
-    # ser.write(b's') #(b's')
-    # #floatlist = [20]
-    # #buf = struct.pack('%sf' % len(floatlist), *floatlist)
-    # ser.write(b'g')
 

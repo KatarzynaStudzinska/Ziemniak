@@ -12,8 +12,10 @@ import Symulacja as sym
 import numpy as np
 import ransac
 import wazserial
+import copy
 import time
 from threading import Thread
+from ransacqp import *
 
 
 try:
@@ -223,17 +225,24 @@ class MyWidget(QtGui.QWidget):
     def paintEvent(self, e):
         qp = QtGui.QPainter()
         qp.begin(self)
-        a = 15
+        a = 6#15
         X0 = 300
         Y0 = 300
+        lines_end = []
+        helpfull_list = copy.copy(self.sensors.points_list)
 
-        for point in self.sensors.points_list:
+        for sth in self.sensors.points_list:
+            list_to_paint = closersPoint(sth, copy.copy(self.sensors.points_list))
+            lines_end.append(paintLandGroup(list_to_paint, qp, a, X0, Y0))
+        print(len(self.sensors.points_list), len(list_to_paint))
+
+
+
+        for (point, index) in zip(self.sensors.points_list, range(len(self.sensors.points_list))):
             qp.fillRect(X0 + a*point[0], Y0 - a*point[1], a, a, QtCore.Qt.blue)
         for point in self.sensors.position:
             qp.fillRect(X0 + int(a*point[0]), Y0 - int(a*point[1]), 4, 4, QtCore.Qt.red)
-        #self.drawField(qp)
-        #self.drawLandmarks(qp)
-        #self.drawRobot(qp)
+
         qp.end()
 
     def keyPressEvent(self, e):
@@ -258,26 +267,6 @@ class MyWidget(QtGui.QWidget):
         elif e.key() == QtCore.Qt.Key_Down:
             self.keys[3] = False"""
 
-    def drawField(self, qp):
-       # print(self.list_of_landmark, "\n")
-        for landmark in self.list_of_landmark:
-            qp.fillRect(landmark[0]*10, landmark[1]*10, 10, 10, QtCore.Qt.blue)
-
-    def drawLandmarks(self, qp):
-
-        helpfull_list = self.landmarks.copy()
-        lines_end =[] # lista zawierajaca konce obliczonych lini
-        for sth in helpfull_list:
-            qp.drawPoint(sth[0],   sth[1])
-            #qp.fillRect(sth[0], sth[1], 14, 14, QtCore.Qt.red)
-        for sth in helpfull_list:
-            #if len(helpfull_list) > 2:
-            pList = ransac.closersPoint(sth, helpfull_list)
-            lines_end.append(ransac.paintLandGroup(pList, qp))
-            pass
-        ransac.paintBlock(lines_end, qp)
-           # ransac.paintLandGroup(self.landmarks, qp)
-        pass
 
     def drawRobot(self, qp):
         #qp.setPen(QtCore.Qt.blue)
