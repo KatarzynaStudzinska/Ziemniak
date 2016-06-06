@@ -1,13 +1,13 @@
 import math as m
 from win32api import GetSystemMetrics
 
-def closersPoint(sth, helpfull_list):
+def closersPoint(sth, helpfull_list, dist):
                                 #w sumie obliczamy dystans od
     sth_list = []
     sth_distance_list = []
     for othersth in helpfull_list:
         distance = m.sqrt((sth[0] - othersth[0])**2 + (sth[1] - othersth[1])**2)
-        if len(sth_list) < 5 and distance < 15:
+        if len(sth_list) < 5 and distance < dist:
             sth_list.append(othersth)
             sth_distance_list.append(distance)
         else:

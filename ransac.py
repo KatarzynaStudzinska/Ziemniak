@@ -64,24 +64,14 @@ def paintLandGroup(landmarks, qp):
         return [[first_point[0], y0], [last_point[0], y1]]#[[first_point[0], y0, [last_point[0], y1]]# zwracamy P0, P1
 
 
-def closersToOnePoint(point, helpfull_list):
-    pLists = []
-    for lm in helpfull_list:
-        if m.sqrt((point[0] - lm[0])**2 + (point[1] - lm[1])**2) < 25:
-                pLists.append(lm)
-                helpfull_list.remove(lm)
-        if len(pLists) > 10:
-                break
-    return pLists
 
-
-def closersPoint(sth, helpfull_list):
+def closersPoint(sth, helpfull_list, max_dist):
                                 #w sumie obliczamy dystans od
     sth_list = []
     sth_distance_list = []
     for othersth in helpfull_list:
         distance = m.sqrt((sth[0] - othersth[0])**2 + (sth[1] - othersth[1])**2)
-        if len(sth_list) < 20 and distance < 60:
+        if len(sth_list) < 20 and distance < max_dist:
             sth_list.append(othersth)
             sth_distance_list.append(distance)
         else:
