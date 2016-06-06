@@ -18,7 +18,7 @@ class Symulacja():
         t.start()
         t2.start()
 
-    def readArduino(self):
+    def readArduino(self): #k
 
         while True:
             pass
