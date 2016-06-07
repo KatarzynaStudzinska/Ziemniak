@@ -7,8 +7,204 @@ from math import sin, cos, pi
 ser = serial.Serial("COM5", 9600)
 
 
-
 class Dane():
+    def __init__(self):
+        self.points_list = []
+        self.sciany = []
+        self.position = []
+        self.lewo = []
+        self.prawo = []
+        self.gora = []
+        self.dol = []
+        self.position.append([0, 0])
+        self.zwrot = 0
+        self.xx = 0
+        self.yy = 0
+        self.x = 0
+        self.y = 0
+        self.krok_zwykly = 100
+        self.krok_skret = 200
+        self.ostatni_krok = 0.4
+        self.odl_przeszkoda = 20
+        self.czujnik_lewo = 0
+        self.czujnik_prosto = 0
+        self.czujnik_prawo = 0
+        self.czujnik_tyl = 0
+        self.sciana = True
+        self.nowa_sciana = True
+        Thread(target=self.joinLandmark, args=()).start()
+        #Thread(target=self.send, args=()).start()
+
+
+    def checksum(self, f1, f2):
+
+        all_bytes = []
+        for b1 in f1:
+            all_bytes.append(ord(b1))
+        for b1 in f2:
+            all_bytes.append(ord(b1))
+
+        LRC = 0x00
+        for k in all_bytes:
+            LRC += k & 0xFF
+        LRC = (((LRC ^ 0xFF) + 1) & 0xFF)
+        return LRC
+
+    def send(self):#, x, y):
+        #time.sleep(2)
+        x = 10*self.position[len(self.position)-1][0]
+        y = 10*self.position[len(self.position)-1][1]
+        #print("x: " + str(x) + " y: " + str(y))
+
+        #print("odleglosc x: ", str(abs(self.xx - x)),"positionX :", x, "odleglosc y: ", (abs(self.yy - y)), "positionY :", y)
+
+        if(abs(self.xx - x) < 20 and abs(self.yy - y) < 20):
+            if self.zwrot == 0:
+
+                if self.czujnik_lewo > self.odl_przeszkoda or self.czujnik_lewo == -6.6:
+                    if(self.sciana):
+                        self.xx = int(x)
+                        self.yy = int(y + self.krok_zwykly*self.ostatni_krok)
+                        self.sciana = False
+                        print("wykonje ostatni krok")
+                    else:
+                        print("zwrot: " + str(self.zwrot) + "lewo")
+                        self.zwrot = 270
+                        self.xx = int(x - self.krok_skret)
+                        self.yy = int(y)
+
+                elif self.czujnik_prosto > self.odl_przeszkoda or self.czujnik_prosto == -6.6:
+                    print("zwrot: " + str(self.zwrot) + "prosto")
+                    self.zwrot = 0
+                    self.xx = int(x)
+                    self.yy = int(y + self.krok_zwykly)
+                    self.sciana = True
+
+                elif self.czujnik_prawo > self.odl_przeszkoda or self.czujnik_prawo == -6.6:
+                    print("zwrot: " + str(self.zwrot) + "prawo")
+                    self.zwrot = 90
+                    self.xx = int(x + self.krok_zwykly)
+                    self.yy = int(y)
+
+                elif self.czujnik_tyl > self.odl_przeszkoda or self.czujnik_tyl == -6.6:
+                    print("zwrot: " + str(self.zwrot) + "tyl")
+                    self.zwrot = 180
+                    self.xx = int(x)
+                    self.yy = int(y - self.krok_zwykly)
+
+
+            elif self.zwrot == 90:
+
+                if self.czujnik_prosto > self.odl_przeszkoda or self.czujnik_prosto == -6.6:
+                    if(self.sciana):
+                        self.xx = int(x + self.krok_zwykly*self.ostatni_krok)
+                        self.yy = int(y)
+                        self.sciana = False
+                        print("wykonje ostatni krok")
+                    else:
+                        print("zwrot: " + str(self.zwrot) + "prosto")
+                        self.zwrot = 0
+                        self.xx = int(x)
+                        self.yy = int(y + self.krok_skret)
+
+                elif self.czujnik_prawo > self.odl_przeszkoda or self.czujnik_prawo == -6.6:
+                    print("zwrot: " + str(self.zwrot) + "prawo")
+                    self.zwrot = 90
+                    self.xx = int(x + self.krok_zwykly)
+                    self.yy = int(y)
+                    self.sciana = True
+
+                elif self.czujnik_tyl > self.odl_przeszkoda or self.czujnik_tyl == -6.6:
+                    print("zwrot: " + str(self.zwrot) + "tyl")
+                    self.zwrot = 180
+                    self.xx = int(x)
+                    self.yy = int(y - self.krok_skret)
+
+                elif self.czujnik_lewo > self.odl_przeszkoda or self.czujnik_lewo == -6.6:
+                    print("zwrot: " + str(self.zwrot) + "lewo")
+                    self.zwrot = 270
+                    self.xx = int(x - self.krok_skret)
+                    self.yy = int(y)
+
+
+            elif self.zwrot == 180:
+
+                if self.czujnik_prawo > self.odl_przeszkoda or self.czujnik_prawo == -6.6:
+                    if(self.sciana):
+                        self.xx = int(x)
+                        self.yy = int(y - self.krok_zwykly*self.ostatni_krok)
+                        self.sciana = False
+                        print("wykonje ostatni krok")
+                    else:
+                        print("zwrot: " + str(self.zwrot) + "prawo")
+                        self.zwrot = 90
+                        self.xx = int(x + self.krok_skret)
+                        self.yy = int(y)
+
+                elif self.czujnik_tyl > self.odl_przeszkoda or self.czujnik_tyl == -6.6:
+                    print("zwrot: " + str(self.zwrot) + "tyl")
+                    self.zwrot = 180
+                    self.xx = int(x)
+                    self.yy = int(y - self.krok_zwykly)
+                    self.sciana = True
+
+                elif self.czujnik_lewo > self.odl_przeszkoda or self.czujnik_lewo == -6.6:
+                    print("zwrot: " + str(self.zwrot) + "lewo")
+                    self.zwrot = 270
+                    self.xx = int(x - self.krok_skret)
+                    self.yy = int(y)
+
+                elif self.czujnik_prosto > self.odl_przeszkoda or self.czujnik_prosto == -6.6:
+                    print("zwrot: " + str(self.zwrot) + "prosto")
+                    self.zwrot = 0
+                    self.xx = int(x)
+                    self.yy = int(y + self.krok_skret)
+
+
+            elif self.zwrot == 270:
+
+                if self.czujnik_tyl > self.odl_przeszkoda or self.czujnik_tyl == -6.6:
+                    if(self.sciana):
+                        self.xx = int(x - self.krok_zwykly*self.ostatni_krok)
+                        self.yy = int(y)
+                        self.sciana = False
+                        print("wykonje ostatni krok")
+                    else:
+                        print("zwrot: " + str(self.zwrot) + "tyl")
+                        self.zwrot = 180
+                        self.xx = int(x)
+                        self.yy = int(y - self.krok_skret)
+
+                elif self.czujnik_lewo > self.odl_przeszkoda or self.czujnik_lewo == -6.6:
+                    print("zwrot: " + str(self.zwrot) + "lewo")
+                    self.zwrot = 270
+                    self.xx = int(x - self.krok_zwykly)
+                    self.yy = int(y)
+                    self.sciana = True
+
+                elif self.czujnik_prosto > self.odl_przeszkoda or self.czujnik_prosto == -6.6:
+                    print("zwrot: " + str(self.zwrot) + "prosto")
+                    self.zwrot = 0
+                    self.xx = int(x)
+                    self.yy = int(y + self.krok_skret)
+
+                elif self.czujnik_prawo > self.odl_przeszkoda or self.czujnik_prawo == -6.6:
+                    print("zwrot: " + str(self.zwrot) + "prawo")
+                    self.zwrot = 90
+                    self.xx = int(x + self.krok_skret)
+                    self.yy = int(y)
+
+        #print(self.xx)
+        #print(self.yy)
+
+        ser.write(b's')
+        ser.write(struct.pack('f', self.xx))
+        ser.write(struct.pack('f', self.yy))
+        wiw = self.checksum(struct.pack('f', self.xx), struct.pack('f', self.xx))
+        ser.write(struct.pack('i', wiw))
+
+
+    """class Dane():
     def __init__(self):
         self.points_list = []
         self.position = []
@@ -182,7 +378,7 @@ class Dane():
         ser.write(struct.pack('f', self.xx))
         ser.write(struct.pack('f', self.yy))
         wiw = self.checksum(struct.pack('f', self.xx), struct.pack('f', self.xx))
-        ser.write(struct.pack('i', wiw))
+        ser.write(struct.pack('i', wiw))"""
 
 
     def odczyt(self):
@@ -206,7 +402,6 @@ class Dane():
 
             try:
                 x, y, p0, p00, p1, p11, p2, p22, p3, p33, p4, p44, p5, p55 = self.odczyt()
-                print(x, y, p0, p00, p1, p11, p2, p22, p3, p33, p4, p44, p5, p55)
                 x = float(x)/10
                 y = float(y)/10
                 p0 = self.corect_data(p0, p00)
@@ -216,7 +411,7 @@ class Dane():
                 p4 = self.corect_data(p4, p44)
                 p5 = self.corect_data(p5, p55)
                 self.czujnik_lewo = p5
-                self.czujnik_prosto = p1
+                self.czujnik_prosto = p0
                 self.czujnik_prawo = p2
                 self.czujnik_tyl = p4
                 #print("lewo :" + str(self.czujnik_lewo) + "    prosto :" + str(self.czujnik_prosto) + "    prawo :" + str(self.czujnik_prawo) + "    tyl :" + str(self.czujnik_tyl))
@@ -240,20 +435,18 @@ class Dane():
                     self.points_list.append([x0, y0])
                 if not x1 == int(x) and not y1 == int(y):
                     self.points_list.append([x1, y1])
-                if not x2 == int(x) and not y2 == int(y):
-                    self.points_list.append([x2, y2])
-                if not x3 == int(x) and not y3 == int(y):
-                    self.points_list.append([x3, y3])
-                if not x4 == int(x) and not y4 == int(y):
-                    self.points_list.append([x4, y4])
-                if not x5 == int(x) and not y5 == int(y):
+                #if not x2 == int(x) and not y2 == int(y):
+                #    self.points_list.append([x2, y2])
+                #if not x3 == int(x) and not y3 == int(y):
+                #    self.points_list.append([x3, y3])
+                #if not x4 == int(x) and not y4 == int(y):
+                #    self.points_list.append([x4, y4])
+                if not x5 == int(x) or not y5 == int(y):
                     self.points_list.append([x5, y5])
-                #print(self.points_list)
+                print(self.points_list)
                 self.send()
             except:
                 pass
-
-
 
 # s = b"s"
 # c_s = c_char_p(s) # tutaj mamy wskaznik na char?
