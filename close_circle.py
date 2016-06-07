@@ -25,6 +25,9 @@ def list_from_lastSquare(point_list):
             solid_point_list.append([x, a*x + b])
     return solid_point_list
 
-solid_point_list = list_from_lastSquare(point_list)
-plt.plot([i[0] for i in solid_point_list],[i[1] for i in solid_point_list], 'x')
-plt.show()
+
+
+if __name__ == "__main__":
+    solid_point_list = list_from_lastSquare(point_list)
+    plt.plot([i[0] for i in solid_point_list],[i[1] for i in solid_point_list], 'x')
+    plt.show()

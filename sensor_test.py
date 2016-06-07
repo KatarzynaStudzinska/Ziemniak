@@ -6,6 +6,7 @@ from threading import Thread
 from math import sin, cos, pi
 ser = serial.Serial("COM5", 9600)
 
+time.sleep(2)
 def odczyt():
 
     x = ser.read(1)
@@ -15,4 +16,4 @@ def odczyt():
 
 while(1):
     x, y, p0, p00, p1, p11, p2, p22, p3, p33, p4, p44, p5, p55 = odczyt()
-    print (p3, " Wiwat K atalonia ", p4)
+    print (p2, " Wiwat K atalonia ", p4)

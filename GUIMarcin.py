@@ -54,54 +54,20 @@ class MyWidget(QtGui.QWidget):
         self.list_of_landmark = []
         self.map = np.zeros((self.wymiar, self.wymiar)) # mapa
         self.zwrot = 0
+
         for elem in range(self.wymiar - 1):
             self.map[elem][self.wymiar - 1] = 1
             self.map[self.wymiar - 1][elem] = 1
             self.map[0][elem] = 1
             self.map[elem][0] = 1
 
-
-        #self.keys = [False, False, False, False]
         self.object = sym.Symulacja()
         self.sensors = wazserial.Dane()
 
-
-
     def showEvent(self, event):
-        #time.sleep(5.0)
         self.timer = self.startTimer(30)
 
     def timerEvent(self, event):
-        """if self.keys[0]:
-            self.theta -= 2
-        elif self.keys[1]:
-            self.theta += 2
-        if self.keys[2]:
-            self.x += 2*m.sin(self.theta*m.pi/180)
-            self.y -= 2*m.cos(self.theta*m.pi/180)
-        elif self.keys[3]:
-            self.x -= 2*m.sin(self.theta*m.pi/180)
-            self.y += 2*m.cos(self.theta*m.pi/180)"""
-
-        #self.x = self.object.coord[0]
-        #self.y = self.object.coord[1]
-        way = self.find_way()
-        self.x = way[0]
-        self.y = way[1]
-
-        #self.sensors.send(100, 100)
-
-        #self.theta = self.object.coord[2]
-
-        #self.trace.append([self.x, self.y])
-        #self.list_of_landmark.append()
-        #self.list_of_landmark = self.object.points_list #tutaj zapisuje punkty z sensorow
-        #self.map[self.object.points_list[-1][0]][self.object.points_list[-1][1]] = 1
-
-
-
-        #print(self.map[self.object.points_list[0], self.object.points_list[1]] )
-        #print(self.object.points_list[-1][0],self.object.points_list[-1][1], self.object.points_list[-1])
         self.update()
 
     def find_way(self):
@@ -126,45 +92,35 @@ class MyWidget(QtGui.QWidget):
 
             if self.map[x - 1][y] == 0 and not self.trace.__contains__([ x - 1,y]):
                 self.zwrot = 270
-                #print [int((x-1)*10), int(y*10)]
                 return [int((x-1)*10), int(y*10)]
 
             if self.map[x][y - 1] == 0 and not self.trace.__contains__([x, y - 1]):
                 self.zwrot = 0
-                #print [int((x) * 10), int((y-1) * 10)]
                 return [int((x) * 10), int((y-1) * 10)]
-
 
             if self.map[x + 1][y] == 0 and not self.trace.__contains__([ x + 1, y]):
                 self.zwrot = 90
-                #print [int((x+1) * 10), int(y * 10)]
                 return [int((x+1) * 10), int(y * 10)]
-
 
             if self.map[x][y+1] == 0 and not self.trace.__contains__([x, y+1]):
                 self.zwrot = 180
-                #print [int((x)*10), int((y+1)*10)]
                 return [int((x)*10), int((y+1)*10)]
 
         if self.zwrot == 90:
 
             if self.map[x][y - 1] == 0 and not self.trace.__contains__([x, y - 1]):
                 self.zwrot = 0
-                #print [int((x) * 10), int((y - 1) * 10)]
                 return [int((x) * 10), int((y - 1) * 10)]
             if self.map[x + 1][y] == 0 and not self.trace.__contains__([x + 1, y]):
                 self.zwrot = 90
-                #print [int((x + 1) * 10), int(y * 10)]
                 return [int((x + 1) * 10), int(y * 10)]
 
             if self.map[x][y + 1] == 0 and not self.trace.__contains__([x, y + 1]):
                 self.zwrot = 180
-                #print [int((x) * 10), int((y + 1) * 10)]
                 return [int((x) * 10), int((y + 1) * 10)]
 
             if self.map[x-1][y] == 0 and not self.trace.__contains__([x-1, y]):
                 self.zwrot = 270
-                #print [int((x - 1) * 10), int(y * 10)]
                 return [int((x - 1) * 10), int(y * 10)]
 
         if self.zwrot == 180:
@@ -172,51 +128,38 @@ class MyWidget(QtGui.QWidget):
 
             if self.map[x + 1][y] == 0 and not self.trace.__contains__([x + 1, y]):
                 self.zwrot = 90
-                #print [int((x + 1) * 10), int(y * 10)]
                 return [int((x + 1) * 10), int(y * 10)]
 
             if self.map[x][y + 1] == 0 and not self.trace.__contains__([x, y + 1]):
                 self.zwrot = 180
-                #print [int((x) * 10), int((y + 1) * 10)]
                 return [int((x) * 10), int((y + 1) * 10)]
 
             if self.map[x - 1][y] == 0 and not self.trace.__contains__([x - 1, y]):
                 self.zwrot = 270
-                #print [int((x - 1) * 10), int(y * 10)]
                 return [int((x - 1) * 10), int(y * 10)]
 
             if self.map[x][y - 1] == 0 and not self.trace.__contains__([x, y - 1]):
                 self.zwrot = 0
-                #print [int((x) * 10), int((y - 1) * 10)]
                 return [int((x) * 10), int((y - 1) * 10)]
 
         if self.zwrot == 270:
-
-
-
             if self.map[x][y + 1] == 0 and not self.trace.__contains__([x, y + 1]):
                 self.zwrot = 180
-                #print [int((x) * 10), int((y + 1) * 10)]
                 return [int((x) * 10), int((y + 1) * 10)]
 
             if self.map[x - 1][y] == 0 and not self.trace.__contains__([x - 1, y]):
                 self.zwrot = 270
-                #print [int((x - 1) * 10), int(y * 10)]
                 return [int((x - 1) * 10), int(y * 10)]
 
             if self.map[x][y - 1] == 0 and not self.trace.__contains__([x, y - 1]):
                 self.zwrot = 0
-                #print [int((x) * 10), int((y - 1) * 10)]
-                return [int((x) * 10), int((y - 1) * 10)]
+                return [int(x * 10), int((y - 1) * 10)]
 
             if self.map[x + 1][y] == 0 and not self.trace.__contains__([x + 1, y]):
                 self.zwrot = 90
-                #print [int((x + 1) * 10), int(y * 10)]
                 return [int((x + 1) * 10), int(y * 10)]
 
-
     def findInTab(self, point):
-
         if point % 10 > 5:
             return (point - point % 10)/10 + 1
         else:
@@ -225,12 +168,13 @@ class MyWidget(QtGui.QWidget):
     def paintEvent(self, e):
         qp = QtGui.QPainter()
         qp.begin(self)
+        self.drawRobot(qp)
         a = 4#15
         X0 = 300
         Y0 = 300
         lines_end = []
         helpfull_list = copy.copy(self.sensors.points_list)
-        self.najmniejsze_kwadraty(self.sensors.points_list, qp, a, X0, Y0)
+
         # for sth in self.sensors.points_list:
         #     list_to_paint = closersPoint(sth, copy.copy(self.sensors.points_list), 35)
         #     print(list_to_paint)
@@ -244,13 +188,10 @@ class MyWidget(QtGui.QWidget):
         #
         #     pass
 
-
-
         for (point, index) in zip(self.sensors.points_list, range(len(self.sensors.points_list))):
             qp.fillRect(X0 + a*point[0], Y0 - a*point[1], a, a, QtCore.Qt.blue)
         for point in self.sensors.position:
             qp.fillRect(X0 + int(a*point[0]), Y0 - int(a*point[1]), 4, 4, QtCore.Qt.red)
-
         qp.end()
 
     def najmniejsze_kwadraty(self, points, qp, scale, x0, y0):
@@ -277,33 +218,13 @@ class MyWidget(QtGui.QWidget):
             b = ysr - a*xsr
             qp.drawLine(x0 + scale*(ymin - b)/a, y0 - scale*ymin, x0 + scale*(ymax - b)/a, y0 - scale*ymax)
 
-
-
     def keyPressEvent(self, e):
         pass
-        """if e.key() == QtCore.Qt.Key_Left:
-            self.keys[0] = True
-        elif e.key() == QtCore.Qt.Key_Right:
-            self.keys[1] = True
-        if e.key() == QtCore.Qt.Key_Up:
-            self.keys[2] = True
-        elif e.key() == QtCore.Qt.Key_Down:
-            self.keys[3] = True"""
 
     def keyReleaseEvent(self, e):
         pass
-        """if e.key() == QtCore.Qt.Key_Left:
-            self.keys[0] = False
-        elif e.key() == QtCore.Qt.Key_Right:
-            self.keys[1] = False
-        if e.key() == QtCore.Qt.Key_Up:
-            self.keys[2] = False
-        elif e.key() == QtCore.Qt.Key_Down:
-            self.keys[3] = False"""
-
 
     def drawRobot(self, qp):
-        #qp.setPen(QtCore.Qt.blue)
         for i in self.trace:
             qp.drawPoint(i[0], i[1])
         qp.setBrush(QtCore.Qt.red)
