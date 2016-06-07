@@ -16,4 +16,4 @@ def odczyt():
 
 while(1):
     x, y, p0, p00, p1, p11, p2, p22, p3, p33, p4, p44, p5, p55 = odczyt()
-    print (p2, " Wiwat K atalonia ", p4)
+    print (p2, " Wiwat K atalonia ", p4, p44)

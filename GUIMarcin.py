@@ -10,13 +10,13 @@ from PyQt4 import QtCore, QtGui
 import math as m
 import Symulacja as sym
 import numpy as np
-import ransac
+
 import wazserial
 import copy
 import time
 from threading import Thread
 from ransacqp import *
-
+from close_circle import *
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -40,6 +40,9 @@ class MyWidget(QtGui.QWidget):
         QtGui.QWidget.__init__(self)
         self.setParent(parent)
         self.show()
+
+
+
         self.trace = []
         self.czekaj = 0
 
@@ -70,96 +73,7 @@ class MyWidget(QtGui.QWidget):
     def timerEvent(self, event):
         self.update()
 
-    def find_way(self):
-
-        x = int(self.findInTab(self.x))
-        y = int(self.findInTab(self.y))
-        #print(self.map[int(x + 1)][int(y)])
-       # if self.map[int(x + 1)][int(y)] == 0 and not self.trace.__contains__([int(x + 1), int(y)]):# and self.czekaj > 5:
-          #  return [int((x + 1)*10), int(y*10)]
-
-
-
-
-       # else:
-        #    return [int((x)*10), int(y*10)]
-       # pass
-
-        # if self.map[int(x)][int(y)] == 0 and not self.trace.__contains__([int(x), int(y)]):
-        #     return [int((x)*10), int(y*10)]
-
-        if self.zwrot == 0:
-
-            if self.map[x - 1][y] == 0 and not self.trace.__contains__([ x - 1,y]):
-                self.zwrot = 270
-                return [int((x-1)*10), int(y*10)]
-
-            if self.map[x][y - 1] == 0 and not self.trace.__contains__([x, y - 1]):
-                self.zwrot = 0
-                return [int((x) * 10), int((y-1) * 10)]
-
-            if self.map[x + 1][y] == 0 and not self.trace.__contains__([ x + 1, y]):
-                self.zwrot = 90
-                return [int((x+1) * 10), int(y * 10)]
-
-            if self.map[x][y+1] == 0 and not self.trace.__contains__([x, y+1]):
-                self.zwrot = 180
-                return [int((x)*10), int((y+1)*10)]
-
-        if self.zwrot == 90:
-
-            if self.map[x][y - 1] == 0 and not self.trace.__contains__([x, y - 1]):
-                self.zwrot = 0
-                return [int((x) * 10), int((y - 1) * 10)]
-            if self.map[x + 1][y] == 0 and not self.trace.__contains__([x + 1, y]):
-                self.zwrot = 90
-                return [int((x + 1) * 10), int(y * 10)]
-
-            if self.map[x][y + 1] == 0 and not self.trace.__contains__([x, y + 1]):
-                self.zwrot = 180
-                return [int((x) * 10), int((y + 1) * 10)]
-
-            if self.map[x-1][y] == 0 and not self.trace.__contains__([x-1, y]):
-                self.zwrot = 270
-                return [int((x - 1) * 10), int(y * 10)]
-
-        if self.zwrot == 180:
-
-
-            if self.map[x + 1][y] == 0 and not self.trace.__contains__([x + 1, y]):
-                self.zwrot = 90
-                return [int((x + 1) * 10), int(y * 10)]
-
-            if self.map[x][y + 1] == 0 and not self.trace.__contains__([x, y + 1]):
-                self.zwrot = 180
-                return [int((x) * 10), int((y + 1) * 10)]
-
-            if self.map[x - 1][y] == 0 and not self.trace.__contains__([x - 1, y]):
-                self.zwrot = 270
-                return [int((x - 1) * 10), int(y * 10)]
-
-            if self.map[x][y - 1] == 0 and not self.trace.__contains__([x, y - 1]):
-                self.zwrot = 0
-                return [int((x) * 10), int((y - 1) * 10)]
-
-        if self.zwrot == 270:
-            if self.map[x][y + 1] == 0 and not self.trace.__contains__([x, y + 1]):
-                self.zwrot = 180
-                return [int((x) * 10), int((y + 1) * 10)]
-
-            if self.map[x - 1][y] == 0 and not self.trace.__contains__([x - 1, y]):
-                self.zwrot = 270
-                return [int((x - 1) * 10), int(y * 10)]
-
-            if self.map[x][y - 1] == 0 and not self.trace.__contains__([x, y - 1]):
-                self.zwrot = 0
-                return [int(x * 10), int((y - 1) * 10)]
-
-            if self.map[x + 1][y] == 0 and not self.trace.__contains__([x + 1, y]):
-                self.zwrot = 90
-                return [int((x + 1) * 10), int(y * 10)]
-
-    def findInTab(self, point):
+    def find_in_tab(self, point):
         if point % 10 > 5:
             return (point - point % 10)/10 + 1
         else:
@@ -168,31 +82,31 @@ class MyWidget(QtGui.QWidget):
     def paintEvent(self, e):
         qp = QtGui.QPainter()
         qp.begin(self)
-        self.drawRobot(qp)
-        a = 4#15
+
+        a = 4
         X0 = 300
         Y0 = 300
-        lines_end = []
-        helpfull_list = copy.copy(self.sensors.points_list)
 
-        # for sth in self.sensors.points_list:
-        #     list_to_paint = closersPoint(sth, copy.copy(self.sensors.points_list), 35)
-        #     print(list_to_paint)
-        #     lines_end.append(paintLandGroup(list_to_paint, qp, a, X0, Y0))
-        #
-        # for para in lines_end:
-        #     end_to_paint = closersPoint(sth, copy.copy(self.sensors.points_list), 50)
-        #     paintLandGroup(end_to_paint, qp, a, X0, Y0)
-        #     # first = para[0]
-        #     # last = para[1]
-        #
-        #     pass
+        lined_points = []
 
-        for (point, index) in zip(self.sensors.points_list, range(len(self.sensors.points_list))):
+        for sth in self.sensors.points_list:
+            list_to_squere = closersPoint(sth, copy.copy(self.sensors.points_list), 60)
+            pointed_list = list_from_lastSquare(list_to_squere)
+            lined_points.extend(pointed_list)
+
+        for point in self.sensors.points_list:
             qp.fillRect(X0 + a*point[0], Y0 - a*point[1], a, a, QtCore.Qt.blue)
         for point in self.sensors.position:
             qp.fillRect(X0 + int(a*point[0]), Y0 - int(a*point[1]), 4, 4, QtCore.Qt.red)
+
+        for point in lined_points:
+            qp.fillRect(X0 + a*point[0], Y0 - a*point[1], a, a, QtCore.Qt.green)
+
+        self.sensors.points_list.extend(copy.copy(lined_points))
+
         qp.end()
+
+
 
     def najmniejsze_kwadraty(self, points, qp, scale, x0, y0):
         n = len(points)

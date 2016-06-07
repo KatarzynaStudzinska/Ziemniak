@@ -18,11 +18,11 @@ def list_from_lastSquare(point_list):
         y_range = range(start_point[1], last_point[1])
         xx = start_point[0]
         for y in y_range:
-            solid_point_list.append([xx, y])
+            solid_point_list.append([int(xx), int(y)])
     else:
         x_range = range(start_point[0], last_point[0])
         for x in x_range:
-            solid_point_list.append([x, a*x + b])
+            solid_point_list.append([int(x), int(a*x + b)])
     return solid_point_list
 
 
@@ -30,4 +30,10 @@ def list_from_lastSquare(point_list):
 if __name__ == "__main__":
     solid_point_list = list_from_lastSquare(point_list)
     plt.plot([i[0] for i in solid_point_list],[i[1] for i in solid_point_list], 'x')
-    plt.show()
+
+    x = [1, 2, 4]
+    y = [3, 1, [122321, 123123]]
+    k = []
+    k.extend(x)
+    k.extend(y)
+    print(k)
