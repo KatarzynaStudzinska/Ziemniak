@@ -206,6 +206,7 @@ class Dane():
 
             try:
                 x, y, p0, p00, p1, p11, p2, p22, p3, p33, p4, p44, p5, p55 = self.odczyt()
+                print(x, y, p0, p00, p1, p11, p2, p22, p3, p33, p4, p44, p5, p55)
                 x = float(x)/10
                 y = float(y)/10
                 p0 = self.corect_data(p0, p00)
@@ -251,6 +252,8 @@ class Dane():
                 self.send()
             except:
                 pass
+
+
 
 # s = b"s"
 # c_s = c_char_p(s) # tutaj mamy wskaznik na char?

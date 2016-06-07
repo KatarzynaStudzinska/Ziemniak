@@ -142,7 +142,7 @@ def main():
         pass
 
     for sth in helpfull_list:
-        list_to_paint = closersPoint(sth, helpfull_list)
+        list_to_paint = closersPoint(sth, helpfull_list, 60)
         lines_end.append(paintLandGroup(list_to_paint, plt))
         print(paintLandGroup(list_to_paint, plt))
 
@@ -157,8 +157,7 @@ def main():
 
 
 
-        #plt.plot([list_of_lines_end[0][0], list_of_lines_end[1][0]], [list_of_lines_end[0][1], list_of_lines_end[1][1]], 'r')
-
+    #plt.plot([list_of_lines_end[0][0], list_of_lines_end[1][0]], [list_of_lines_end[0][1], list_of_lines_end[1][1]], 'r')
     #paintBlock(lines_end, plt)
 
     plt.show()

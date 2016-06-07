@@ -230,7 +230,7 @@ class MyWidget(QtGui.QWidget):
         Y0 = 300
         lines_end = []
         helpfull_list = copy.copy(self.sensors.points_list)
-
+        self.najmniejsze_kwadraty(self.sensors.points_list, qp, a, X0, Y0)
         # for sth in self.sensors.points_list:
         #     list_to_paint = closersPoint(sth, copy.copy(self.sensors.points_list), 35)
         #     print(list_to_paint)
@@ -252,6 +252,32 @@ class MyWidget(QtGui.QWidget):
             qp.fillRect(X0 + int(a*point[0]), Y0 - int(a*point[1]), 4, 4, QtCore.Qt.red)
 
         qp.end()
+
+    def najmniejsze_kwadraty(self, points, qp, scale, x0, y0):
+        n = len(points)
+        if n > 3:
+            x = 0
+            y = 0
+            xx = 0
+            xy = 0
+            ymin = 99999999999999999999999
+            ymax = -99999999999999999999999
+            for point in points:
+                if point[1] < ymin:
+                    ymin = point[1]
+                if point[1] > ymax:
+                    ymax = point[1]
+                x += point[0]
+                y += point[1]
+                xx += point[0]**2
+                xy += point[0]*point[1]
+            xsr = x/n
+            ysr = y/n
+            a = (n*xy - x*y) / (n*xx - x**2)
+            b = ysr - a*xsr
+            qp.drawLine(x0 + scale*(ymin - b)/a, y0 - scale*ymin, x0 + scale*(ymax - b)/a, y0 - scale*ymax)
+
+
 
     def keyPressEvent(self, e):
         pass
