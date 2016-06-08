@@ -41,7 +41,7 @@ class MyWidget(QtGui.QWidget):
         self.setParent(parent)
         self.show()
 
-
+        self.lined_points = []
 
         self.trace = []
         self.czekaj = 0
@@ -87,22 +87,22 @@ class MyWidget(QtGui.QWidget):
         X0 = 300
         Y0 = 300
 
-        lined_points = []
+
 
         for sth in self.sensors.points_list:
             list_to_squere = closersPoint(sth, copy.copy(self.sensors.points_list), 60)
             pointed_list = list_from_lastSquare(list_to_squere)
-            lined_points.extend(pointed_list)
+            self.lined_points.extend(pointed_list)
 
         for point in self.sensors.points_list:
             qp.fillRect(X0 + a*point[0], Y0 - a*point[1], a, a, QtCore.Qt.blue)
         for point in self.sensors.position:
             qp.fillRect(X0 + int(a*point[0]), Y0 - int(a*point[1]), 4, 4, QtCore.Qt.red)
 
-        for point in lined_points:
+        for point in self.lined_points:
             qp.fillRect(X0 + a*point[0], Y0 - a*point[1], a, a, QtCore.Qt.green)
 
-        self.sensors.points_list.extend(copy.copy(lined_points))
+
 
         qp.end()
 

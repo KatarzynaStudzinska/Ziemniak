@@ -25,7 +25,8 @@ def closersPoint(sth, helpfull_list, dist):
 
     for i in sth_list:                     #wywalamy punkty z listy, zeby nie dodawac tych samych punktow do roznych sasiadow
         helpfull_list.remove(i)
-    return sth_list #zwracamy liste punktow, ktore tworza prosta, tj. takich, ktore sa siebie blisko
+
+    return sth_list                        #zwracamy liste punktow, ktore tworza prosta, tj. takich, ktore sa siebie blisko
 
 
 def leastSquares(landmarks):   #zwraca wspolczynniki a i b prostej
